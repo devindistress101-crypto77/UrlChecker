@@ -28,7 +28,6 @@
                 margin-bottom: 25px;
             }
 
-            /* Compact grid layout for smaller preview windows */
             .grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -47,6 +46,7 @@
                 justify-content: space-between;
                 transition: 0.3s;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                cursor: pointer; /* 👈 Indicates clickable */
             }
 
             .card:hover {
@@ -65,22 +65,37 @@
                 text-overflow: ellipsis;
             }
 
-            /* Smaller mini loading areas */
             iframe {
                 width: 100%;
                 height: 110px;
                 border: 1px solid #333;
                 border-radius: 8px;
                 background: #0b0b0e;
+                pointer-events: none; /* 👈 Prevents iframe from stealing clicks */
+            }
+
+            /* Optional: visual hint overlay */
+            .card::after {
+                content: "↗ Open";
+                position: absolute;
+                top: 10px;
+                right: 12px;
+                font-size: 11px;
+                color: #ffcc00;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            .card:hover::after {
+                opacity: 1;
             }
         </style>
     </head>
     <body>
         <h2>Mini Network Monitor</h2>
-        <p>Micro preview areas to quickly spot Clever blocks or "could not load" errors.</p>
+        <p>Micro preview areas to quickly spot IBOSS blocks — click any card to open the site</p>
         <div class="grid" id="monitor-grid"></div>
+
         <script>
-            // Your variable holding the monitored sites
             const websitesToMonitor = [
                 { name: "Testing Target 3", url: "https://github.com" },
                 { name: "Testing Target 4", url: "https://bing.com" }
@@ -91,10 +106,31 @@
             websitesToMonitor.forEach(site => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `Open ${site.name}`);
+                
                 card.innerHTML = `
                     <div class="card-header">${site.name}</div>
-                    <iframe src="${site.url}" title="${site.name}"></iframe>
+                    <iframe src="${site.url}" title="${site.name}" loading="lazy"></iframe>
                 `;
+
+                // Click handler: open site in new tab
+                card.addEventListener('click', (e) => {
+                    // Prevent opening if clicking future interactive elements inside card
+                    if (!e.target.closest('iframe')) {
+                        window.open(site.url, '_blank', 'noopener,noreferrer');
+                    }
+                });
+
+                // Keyboard accessibility: Enter/Space to open
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        window.open(site.url, '_blank', 'noopener,noreferrer');
+                    }
+                });
+
                 grid.appendChild(card);
             });
         </script>
