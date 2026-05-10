@@ -45,7 +45,6 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                height: auto;
                 transition: 0.3s;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             }
@@ -73,44 +72,18 @@
                 border: 1px solid #333;
                 border-radius: 8px;
                 background: #0b0b0e;
-                margin-bottom: 10px;
-            }
-
-            /* Status indicator */
-            .status {
-                font-size: 12px;
-                padding: 6px 10px;
-                border-radius: 6px;
-                text-align: center;
-                font-weight: bold;
-                margin-top: 8px;
-            }
-
-            .status.loading {
-                background: #007bff;
-                color: white;
-            }
-
-            .status.error {
-                background: #e94560;
-                color: white;
-            }
-
-            .status.success {
-                background: #00ff88;
-                color: #000;
             }
         </style>
     </head>
     <body>
         <h2>Mini Network Monitor</h2>
-        <p>Micro preview areas to quickly spot blocks or "could not load" errors.</p>
+        <p>Micro preview areas to quickly spot Clever blocks or "could not load" errors.</p>
         <div class="grid" id="monitor-grid"></div>
         <script>
             // Your variable holding the monitored sites
             const websitesToMonitor = [
-                { name: "GitHub", url: "https://github.com" },
-                { name: "Bing", url: "https://bing.com" }
+                { name: "Testing Target 3", url: "https://github.com" },
+                { name: "Testing Target 4", url: "https://bing.com" }
             ];
 
             const grid = document.getElementById('monitor-grid');
@@ -120,17 +93,10 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <div class="card-header">${site.name}</div>
-                    <iframe src="${site.url}" title="${site.name}" onload="updateStatus(this, 'success')" onerror="updateStatus(this, 'error')"></iframe>
-                    <div class="status loading">Loading...</div>
+                    <iframe src="${site.url}" title="${site.name}"></iframe>
                 `;
                 grid.appendChild(card);
             });
-
-            function updateStatus(iframe, status) {
-                const statusEl = iframe.parentElement.querySelector('.status');
-                statusEl.className = `status ${status}`;
-                statusEl.textContent = status === 'success' ? '✓ Connected' : '✗ Failed to load';
-            }
         </script>
     </body>
 </html>
